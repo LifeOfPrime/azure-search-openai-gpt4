@@ -16,7 +16,7 @@ import { ClearChatButton } from "../../components/ClearChatButton";
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
-    const [retrieveCount, setRetrieveCount] = useState<number>(3);
+    const [retrieveCount, setRetrieveCount] = useState<number>(7);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
@@ -187,7 +187,7 @@ const Chat = () => {
                     <div className={styles.chatInput}>
                         <QuestionInput
                             clearOnSend
-                            placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"
+                            placeholder="Type a new question"
                             disabled={isLoading}
                             onSend={question => makeApiRequest(question)}
                         />
@@ -214,14 +214,14 @@ const Chat = () => {
                     onRenderFooterContent={() => <DefaultButton onClick={() => setIsConfigPanelOpen(false)}>Close</DefaultButton>}
                     isFooterAtBottom={true}
                 >
-                    <TextField
+                    {/* <TextField
                         className={styles.chatSettingsSeparator}
                         defaultValue={promptTemplate}
                         label="Override prompt template"
                         multiline
                         autoAdjustHeight
                         onChange={onPromptTemplateChange}
-                    />
+                    /> */}
 
                     <SpinButton
                         className={styles.chatSettingsSeparator}
@@ -231,27 +231,27 @@ const Chat = () => {
                         defaultValue={retrieveCount.toString()}
                         onChange={onRetrieveCountChange}
                     />
-                    <TextField className={styles.chatSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
-                    <Checkbox
+                    {/* <TextField className={styles.chatSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} /> */}
+                    {/* <Checkbox
                         className={styles.chatSettingsSeparator}
                         checked={useSemanticRanker}
                         label="Use semantic ranker for retrieval"
                         onChange={onUseSemanticRankerChange}
-                    />
-                    <Checkbox
+                    /> */}
+                    {/* <Checkbox
                         className={styles.chatSettingsSeparator}
                         checked={useSemanticCaptions}
                         label="Use query-contextual summaries instead of whole documents"
                         onChange={onUseSemanticCaptionsChange}
                         disabled={!useSemanticRanker}
-                    />
+                    /> */}
                     <Checkbox
                         className={styles.chatSettingsSeparator}
                         checked={useSuggestFollowupQuestions}
                         label="Suggest follow-up questions"
                         onChange={onUseSuggestFollowupQuestionsChange}
                     />
-                    <Dropdown
+                    {/* <Dropdown
                         className={styles.chatSettingsSeparator}
                         label="Retrieval mode"
                         options={[
@@ -261,7 +261,7 @@ const Chat = () => {
                         ]}
                         required
                         onChange={onRetrievalModeChange}
-                    />
+                    /> */}
                 </Panel>
             </div>
         </div>

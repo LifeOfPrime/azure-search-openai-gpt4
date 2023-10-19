@@ -5,6 +5,7 @@ import os
 import time
 
 import openai
+import tiktoken
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.readdecomposeask import ReadDecomposeAsk
 from approaches.readretrieveread import ReadRetrieveReadApproach
@@ -74,7 +75,7 @@ chat_approaches = {
 
 app = Flask(__name__)
 
-@app.route("/", defaults={"path": "index.html"})
+# @app.route("/", defaults={"path": "index.html"})
 @app.route("/<path:path>")
 def static_file(path):
     return app.send_static_file(path)
@@ -123,6 +124,19 @@ def chat():
         return jsonify(r)
     except Exception as e:
         logging.exception("Exception in /chat")
+        return jsonify({"error": str(e)}), 500
+    
+@app.route("/counttoken", methods=["POST"])
+def num_tokens_from_string():
+    if not request.json:
+        return jsonify({"error": "request must be json"}), 400
+    try:
+        text = request.json["text"]
+        encoding = tiktoken.encoding_for_model('gpt-4')
+        num_tokens = len(encoding.encode(text))
+        return jsonify({"token": num_tokens }), 200
+    except Exception as e:
+        logging.exception("Exception in /counttoken")
         return jsonify({"error": str(e)}), 500
 
 @app.before_request

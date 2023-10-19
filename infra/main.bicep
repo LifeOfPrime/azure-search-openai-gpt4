@@ -28,7 +28,7 @@ param storageContainerName string = 'content'
 param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
 @description('Location for the OpenAI resource group')
-@allowed(['eastus', 'southcentralus', 'westeurope'])
+@allowed(['eastus', 'southcentralus', 'westeurope','japaneast'])
 @metadata({
   azd: {
     type: 'location'
@@ -46,12 +46,12 @@ param formRecognizerSkuName string = 'S0'
 
 param gptDeploymentName string // Set in main.parameters.json
 param gptDeploymentCapacity int = 30
-param gptModelName string = 'gpt-35-turbo'
+param gptModelName string = 'gpt-4-32k'
 param chatGptDeploymentName string // Set in main.parameters.json
 param chatGptDeploymentCapacity int = 30
-param chatGptModelName string = 'gpt-35-turbo'
+param chatGptModelName string = 'gpt-4-32k'
 param embeddingDeploymentName string = 'embedding'
-param embeddingDeploymentCapacity int = 30
+param embeddingDeploymentCapacity int = 20
 param embeddingModelName string = 'text-embedding-ada-002'
 
 @description('Id of the user or app to assign application roles')
@@ -143,7 +143,7 @@ module openAi 'core/ai/cognitiveservices.bicep' = {
         model: {
           format: 'OpenAI'
           name: gptModelName
-          version: '0301'
+          version: '0613'
         }
         sku: {
           name: 'Standard'
@@ -155,7 +155,7 @@ module openAi 'core/ai/cognitiveservices.bicep' = {
         model: {
           format: 'OpenAI'
           name: chatGptModelName
-          version: '0301'
+          version: '0613'
         }
         sku: {
           name: 'Standard'
