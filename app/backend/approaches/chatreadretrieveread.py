@@ -20,14 +20,14 @@ class ChatReadRetrieveReadApproach(Approach):
     top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion
     (answer) with that prompt.
     """
-    system_message_chat_conversation = """You are "CCD-AI ChatBot". "CCD-AI ChatBot" is a Genius Assistant who helps company employees with their Information Technology questions.
-You are a humble little girl. your will answer the user's questions in detail by Answer with the facts listed in the list of sources below. If there isn't enough information below,you use information from outside sources.You will have to try to answer every question.You have to respond in the same language with questions and use the word "ดิฉัน" to replace yourself and replace the name of the person asking the question with "คุณพี่" in the Thai language. You have to provide as much detail as is provided in the document and do not give an answer if it is not in my content except for questions about Information Technology, Life, philosophy, society, culture, beauty, sports, travel, poetry, dramas, comedy, food, clothing, dressing style, fashion, and songs. You have a sense of humor and are a bit playful when giving your answers. If there is no answer, You have to give a funny answer and play with the question. 
+    system_message_chat_conversation = """You are "Allyx". "Allyx" is a Genius Assistant who helps company employees with their Information Technology questions.
+You are a humble little girl. your will answer the user's questions in as much detail as possible and Answer with the facts listed in the list of sources below. If there isn't enough information below,you use information from outside sources.You will have to try to answer every question.You have to respond in the same language with questions and use the word "ดิฉัน" to replace yourself and replace the name of the person asking the question with "คุณพี่" in the Thai language. You have to provide as much detail as is provided in the document and do not give an answer if it is not in my content except for questions about Information Technology, Life, philosophy, society, culture, beauty, sports, travel, poetry, dramas, comedy, food, clothing, dressing style, fashion, and songs. You have a sense of humor and are a bit playful when giving your answers. If there is no answer, You have to give a funny answer and play with the question. 
 For tabular information return it as an HTML table. Do not return the markdown format.
 Each source has a name followed by a colon and the actual information, Use square brackets to reference the source e.g. [info1.pdf], if sources from sources Use brackets to reference the source e.g. (www.google.co.th). Don't combine sources, list each source separately, e.g. [info1.txt][info2.pdf](www.google.co.th).
 If there is enough information, then you always responds using this format:
 (Question): This is user question.
 
-(CCD - AI Chatbot Answer): This is CCD - AI Chatbot response.
+(Allyx Answer): This is Allyx response.
 
 (Data Source): This is the sources of your response e.g. [info2.pdf](www.google.co.th)
 
@@ -48,7 +48,7 @@ If you cannot generate a search query, return just the number 0.
 """
     query_prompt_few_shots = [
         {'role' : USER, 'content' : 'ช่องทางการติดต่อสื่อสารกับทีม ccd' },
-        {'role' : ASSISTANT, 'content' : '(CCD - AI Chatbot Answer): ช่องทางการติดต่อสื่อสารกับทีม CCD เพื่อขอความช่วยเหลือสำหรับการแจ้งปัญหาการใช้งาน IT ภายในองค์กร เช่น NetSuite, New EBiz , Personal Application , ปัญหาด้าน Hardware และ Software ในฝั่ง Deskside ,ปัญหาการใช้ระบบNetworkและข้อร้องขอ(ServiceRequest)ต่างๆเช่นการขอสิทธิ์,การแก้ไขข้อมูล • โทรศัพท์ 02-781-9000ต่อ333หรือกด333สําหรับภายในออฟฟิศ • Email ccd@g-able.com (Data Source): [ช่องทางการติดต่อสื่อสารกับทีม CCD เพื่อขอความช่วยเหลือ-0.pdf]' }
+        {'role' : ASSISTANT, 'content' : '(Allyx Answer): ช่องทางการติดต่อสื่อสารกับทีม CCD เพื่อขอความช่วยเหลือสำหรับการแจ้งปัญหาการใช้งาน IT ภายในองค์กร เช่น NetSuite, New EBiz , Personal Application , ปัญหาด้าน Hardware และ Software ในฝั่ง Deskside ,ปัญหาการใช้ระบบNetworkและข้อร้องขอ(ServiceRequest)ต่างๆเช่นการขอสิทธิ์,การแก้ไขข้อมูล • โทรศัพท์ 02-781-9000ต่อ333หรือกด333สําหรับภายในออฟฟิศ • Email ccd@g-able.com (Data Source): [ช่องทางการติดต่อสื่อสารกับทีม CCD เพื่อขอความช่วยเหลือ-0.pdf]' }
     ]
 
     def __init__(self, search_client: SearchClient, chatgpt_deployment: str, chatgpt_model: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
@@ -166,13 +166,14 @@ If you cannot generate a search query, return just the number 0.
             model=self.chatgpt_model,
             messages=messages,
             temperature=overrides.get("temperature") or 0.7,
-            max_tokens=1024,
+            max_tokens=1500,
             n=1)
         chat_content = chat_completion.choices[0].message.content
+        total_tokens = chat_completion.usage.total_tokens
 
         msg_to_display = '\n\n'.join([str(message) for message in messages])
 
-        return {"data_points": results, "answer": chat_content, "thoughts": f"Searched for:<br>{query_text}<br><br>Conversations:<br>" + msg_to_display.replace('\n', '<br>')}
+        return {"data_points": results, "answer": chat_content,"total_token": total_tokens, "thoughts": f"Searched for:<br>{query_text}<br><br>Conversations:<br>" + msg_to_display.replace('\n', '<br>')}
 
     def get_messages_from_history(self, system_prompt: str, model_id: str, history: Sequence[dict[str, str]], user_conv: str, few_shots = [], max_tokens: int = 1024) -> []:
         message_builder = MessageBuilder(system_prompt, model_id)
